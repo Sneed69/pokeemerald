@@ -146,8 +146,8 @@ static void ClearRoamerLocationHistory(u8 index)
 
     for (i = 0; i < ARRAY_COUNT(sLocationHistory[index]); i++)
     {
-        sLocationHistory[index][i][MAP_GRP] = 0;
-        sLocationHistory[index][i][MAP_NUM] = 0;
+        sLocationHistory[index][i][MAP_GRP] = 0x7F; // 0 is Petalburg city
+        sLocationHistory[index][i][MAP_NUM] = 0x7F; // 0x7F is MAP_NONE
     }
 }
 
