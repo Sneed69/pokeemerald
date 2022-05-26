@@ -469,7 +469,7 @@ static const struct WindowTemplate sSummaryTemplate[] =
     [PSS_LABEL_WINDOW_POKEMON_INFO_TYPE] = {
         .bg = 0,
         .tilemapLeft = 11,
-        .tilemapTop = 6,
+        .tilemapTop = 5,
         .width = 18,
         .height = 2,
         .paletteNum = 6,
@@ -572,7 +572,7 @@ static const struct WindowTemplate sPageInfoTemplate[] =
     [PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER] = {
         .bg = 0,
         .tilemapLeft = 11,
-        .tilemapTop = 4,
+        .tilemapTop = 3,
         .width = 11,
         .height = 2,
         .paletteNum = 6,
@@ -581,7 +581,7 @@ static const struct WindowTemplate sPageInfoTemplate[] =
     [PSS_DATA_WINDOW_INFO_ID] = {
         .bg = 0,
         .tilemapLeft = 22,
-        .tilemapTop = 4,
+        .tilemapTop = 3,
         .width = 7,
         .height = 2,
         .paletteNum = 6,
@@ -590,20 +590,20 @@ static const struct WindowTemplate sPageInfoTemplate[] =
     [PSS_DATA_WINDOW_INFO_ABILITY] = {
         .bg = 0,
         .tilemapLeft = 11,
-        .tilemapTop = 9,
-        .width = 18,
-        .height = 4,
+        .tilemapTop = 8,
+        .width = 19,
+        .height = 6,
         .paletteNum = 6,
         .baseBlock = 485,
     },
     [PSS_DATA_WINDOW_INFO_MEMO] = {
         .bg = 0,
         .tilemapLeft = 11,
-        .tilemapTop = 14,
-        .width = 18,
-        .height = 6,
+        .tilemapTop = 15,
+        .width = 19,
+        .height = 5,
         .paletteNum = 6,
-        .baseBlock = 557,
+        .baseBlock = 591 + 19 * 6,
     },
 };
 static const struct WindowTemplate sPageSkillsTemplate[] =
@@ -3074,7 +3074,7 @@ static void PrintMonAbilityName(void)
 static void PrintMonAbilityDescription(void)
 {
     u8 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilityDescriptionPointers[ability], 0, 17, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilityDescriptionPointers[ability], 0, 15, 0, 0);
 }
 
 static void BufferMonTrainerMemo(void)
@@ -3131,7 +3131,7 @@ static void BufferMonTrainerMemo(void)
 
 static void PrintMonTrainerMemo(void)
 {
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_MEMO), gStringVar4, 0, 1, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_MEMO), gStringVar4, 0, 2, 0, 0);
 }
 
 static void BufferNatureString(void)
@@ -3783,15 +3783,15 @@ static void SetMonTypeIcons(void)
     struct PokeSummary *summary = &sMonSummaryScreen->summary;
     if (summary->isEgg)
     {
-        SetTypeSpritePosAndPal(TYPE_MYSTERY, 120, 48, SPRITE_ARR_ID_TYPE);
+        SetTypeSpritePosAndPal(TYPE_MYSTERY, 120, 40, SPRITE_ARR_ID_TYPE);
         SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
     }
     else
     {
-        SetTypeSpritePosAndPal(gBaseStats[summary->species].type1, 120, 48, SPRITE_ARR_ID_TYPE);
+        SetTypeSpritePosAndPal(gBaseStats[summary->species].type1, 120, 40, SPRITE_ARR_ID_TYPE);
         if (gBaseStats[summary->species].type1 != gBaseStats[summary->species].type2)
         {
-            SetTypeSpritePosAndPal(gBaseStats[summary->species].type2, 160, 48, SPRITE_ARR_ID_TYPE + 1);
+            SetTypeSpritePosAndPal(gBaseStats[summary->species].type2, 160, 40, SPRITE_ARR_ID_TYPE + 1);
             SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
         }
         else
