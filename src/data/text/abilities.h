@@ -65,8 +65,8 @@ static const u8 sShedSkinDescription[] = _("Chance to cure a status\ncondition a
 static const u8 sGutsDescription[] = _("Suffering from a status\ncondition boosts Attack.");
 static const u8 sMarvelScaleDescription[] = _("Suffering from a status\ncondition boosts Defense.");
 static const u8 sLiquidOozeDescription[] = _("Damages attackers that\nuse any draining move.");
-static const u8 sOvergrowDescription[] = _("At low HP, Grass-type moves\nare powered up..");
-static const u8 sBlazeDescription[] = _("At low HP, Fire-type moves\nare powered up..");
+static const u8 sOvergrowDescription[] = _("At low HP, Grass-type moves\nare powered up.");
+static const u8 sBlazeDescription[] = _("At low HP, Fire-type moves\nare powered up.");
 static const u8 sTorrentDescription[] = _("At low HP, Water-type moves\nare powered up.");
 static const u8 sSwarmDescription[] = _("At low HP, Bug-type moves\nare powered up.");
 static const u8 sRockHeadDescription[] = _("Not damaged by recoil.");
@@ -172,7 +172,7 @@ static const u8 sGaleWingsDescription[] = _("Gives priority to\nFlying-type move
 #else
 static const u8 sGaleWingsDescription[] = _("Gives priority to Flying-\ntype moves when HP is full.");
 #endif
-static const u8 sMegaLauncherDescription[] = _("Powers up aura\nand pulse moves.");
+static const u8 sMegaLauncherDescription[] = _("Boosts the power of\naura and pulse moves.");
 static const u8 sGrassPeltDescription[] = _("Boosts Defense\non Grassy Terrain.");
 static const u8 sSymbiosisDescription[] = _("Replaces its partner's used\nitem with its own.");
 static const u8 sToughClawsDescription[] = _("Boosts the power of moves\nthat make direct contact.");
