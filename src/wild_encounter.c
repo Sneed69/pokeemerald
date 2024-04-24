@@ -76,7 +76,7 @@ EWRAM_DATA static u32 sFeebasRngValue = 0;
 EWRAM_DATA bool8 gIsFishingEncounter = 0;
 EWRAM_DATA bool8 gIsSurfingEncounter = 0;
 
-#ifdef I_FISHING_CHAIN
+#if I_FISHING_CHAIN
 EWRAM_DATA u8 gChainFishingDexNavStreak = 0;
 EWRAM_DATA static u16 sLastFishingSpecies = 0;
 #endif
