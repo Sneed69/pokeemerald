@@ -304,6 +304,9 @@
 #define B_WEATHER_SNOW_TEMPORARY      (1 << 12)
 #define B_WEATHER_SNOW_PERMANENT      (1 << 13)
 #define B_WEATHER_SNOW                (B_WEATHER_SNOW_TEMPORARY | B_WEATHER_SNOW_PERMANENT)
+#define B_WEATHER_FOG_TEMPORARY       (1 << 14)
+#define B_WEATHER_FOG_PERMANENT       (1 << 15)
+#define B_WEATHER_FOG                 (B_WEATHER_FOG_TEMPORARY | B_WEATHER_FOG_PERMANENT)
 
 // Battle Weather as enum
 #define ENUM_WEATHER_NONE                 0
@@ -315,6 +318,7 @@
 #define ENUM_WEATHER_RAIN_PRIMAL          6
 #define ENUM_WEATHER_STRONG_WINDS         7
 #define ENUM_WEATHER_SNOW                 8
+#define ENUM_WEATHER_FOG                  9
 
 // Move Effects
 #define MOVE_EFFECT_SLEEP               1
@@ -398,8 +402,9 @@
 #define MOVE_EFFECT_FLORAL_HEALING      77
 #define MOVE_EFFECT_SECRET_POWER        78
 #define MOVE_EFFECT_PSYCHIC_NOISE       79
+#define MOVE_EFFECT_TERA_BLAST          80
 
-#define NUM_MOVE_EFFECTS                80
+#define NUM_MOVE_EFFECTS                81
 
 #define MOVE_EFFECT_AFFECTS_USER        0x2000
 #define MOVE_EFFECT_CERTAIN             0x4000
