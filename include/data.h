@@ -53,6 +53,8 @@ struct TrainerBacksprite
 #define TRAINER_PARTY_IVS(hp, atk, def, speed, spatk, spdef) (hp | (atk << 5) | (def << 10) | (speed << 15) | (spatk << 20) | (spdef << 25))
 #define TRAINER_PARTY_EVS(hp, atk, def, speed, spatk, spdef) ((const u8[6]){hp,atk,def,spatk,spdef,speed})
 
+// Shared by both trainer and frontier mons
+// See CreateNPCTrainerPartyFromTrainer and CreateFacilityMon
 struct TrainerMon
 {
     const u8 *nickname;
@@ -69,6 +71,7 @@ struct TrainerMon
     bool8 gender:2;
     bool8 isShiny:1;
     u8 dynamaxLevel:4;
+    u8 teraType:5;
     bool8 gigantamaxFactor:1;
     bool8 shouldDynamax:1;
     bool8 shouldTerastal:1;
