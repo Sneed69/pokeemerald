@@ -596,7 +596,7 @@ static void Task_LoadEvolutionScreen(u8 taskId);
 static void Task_HandleEvolutionScreenInput(u8 taskId);
 static void Task_SwitchScreensFromEvolutionScreen(u8 taskId);
 static void Task_ExitEvolutionScreen(u8 taskId);
-static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth, u8 base_i_offset, u32 alreadyPrintedIcons[], u32 base_icon_i_offSet);
+static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth, u8 base_i_offset, u32 alreadyPrintedIcons[], u32 *base_icon_i_offSet);
 static u8 PrintPreEvolutions(u8 taskId, u16 species);
 //Stat bars on scrolling screens
 static void TryDestroyStatBars(void);
@@ -6080,9 +6080,10 @@ static void Task_LoadEvolutionScreen(u8 taskId)
     case 4:
         //Print evo info and icons
         u32 alreadyPrintedIcons[9] = {0};
+        u32 iconOffset = sPokedexView->numPreEvolutions;
 
         gTasks[taskId].data[3] = 0;
-        PrintEvolutionTargetSpeciesAndMethod(taskId, NationalPokedexNumToSpeciesHGSS(sPokedexListItem->dexNum), 0, sPokedexView->numPreEvolutions, alreadyPrintedIcons, sPokedexView->numPreEvolutions);
+        PrintEvolutionTargetSpeciesAndMethod(taskId, NationalPokedexNumToSpeciesHGSS(sPokedexListItem->dexNum), 0, sPokedexView->numPreEvolutions, alreadyPrintedIcons, &iconOffset);
         LoadSpritePalette(&gSpritePalette_Arrow);
         GetSeenFlagTargetSpecies();
         if (sPokedexView->sEvoScreenData.numAllEvolutions > 0 && sPokedexView->sEvoScreenData.numSeen > 0)
@@ -6413,7 +6414,7 @@ static u8 PrintPreEvolutions(u8 taskId, u16 species)
 #define EVO_SCREEN_CRITS_DIGITS 1
 #define EVO_SCREEN_DMG_DIGITS 2
 
-static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth, u8 base_i_offset, u32 alreadyPrintedIcons[], u32 base_icon_i_offSet)
+static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth, u8 base_i_offset, u32 alreadyPrintedIcons[], u32 *base_icon_i_offSet)
 {
     int i;
     const struct MapHeader *mapHeader;
@@ -6427,7 +6428,6 @@ static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth,
     u8 base_y = 51;
     u8 base_y_offset = 9;
     u8 base_i = 0;
-    u8 base_icon_i = base_icon_i_offSet;
     u8 times = 0;
     u8 depth_x = 16;
     const struct Evolution *evolutions = GetSpeciesEvolutions(species);
@@ -6477,9 +6477,9 @@ static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth,
                 break;
             if (alreadyPrintedIcons[j] == SPECIES_NONE)
             {
-                HandleTargetSpeciesPrintIcon(taskId, targetSpecies, base_icon_i, times);
+                HandleTargetSpeciesPrintIcon(taskId, targetSpecies, *base_icon_i_offSet, times);
                 alreadyPrintedIcons[j] = targetSpecies;
-                base_icon_i++;
+                (*base_icon_i_offSet)++;
                 break;
             }
         }
@@ -6676,7 +6676,7 @@ static u8 PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 depth,
         }//Switch end
         PrintInfoScreenTextSmall(gStringVar4, base_x + depth_x*depth+base_x_offset, base_y + base_y_offset*base_i); //Print actual instructions
 
-        base_i_offset += PrintEvolutionTargetSpeciesAndMethod(taskId, targetSpecies, depth+1, base_i+1, alreadyPrintedIcons, base_icon_i);
+        base_i_offset += PrintEvolutionTargetSpeciesAndMethod(taskId, targetSpecies, depth+1, base_i+1, alreadyPrintedIcons, base_icon_i_offSet);
     }//For loop end
 
     return times;
