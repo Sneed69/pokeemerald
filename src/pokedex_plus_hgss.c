@@ -2535,11 +2535,8 @@ static bool8 LoadPokedexListPage(u8 page)
 
 static void CreatePokedexList(u8 dexMode, u8 order)
 {
-    u16 vars[3]; //I have no idea why three regular variables are stored in an array, but whatever.
-#define temp_dexCount   vars[0]
-#define temp_isHoennDex vars[1]
-#define temp_dexNum     vars[2]
-    s16 i;
+    u32 dexCount, isHoennDex, dexNum;
+    int i;
 
     sPokedexView->pokemonListCount = 0;
 
@@ -2547,19 +2544,19 @@ static void CreatePokedexList(u8 dexMode, u8 order)
     {
     default:
     case DEX_MODE_HOENN:
-        temp_dexCount = HOENN_DEX_COUNT;
-        temp_isHoennDex = TRUE;
+        dexCount = HOENN_DEX_COUNT;
+        isHoennDex = TRUE;
         break;
     case DEX_MODE_NATIONAL:
         if (IsNationalPokedexEnabled())
         {
-            temp_dexCount = NATIONAL_DEX_COUNT;
-            temp_isHoennDex = FALSE;
+            dexCount = NATIONAL_DEX_COUNT;
+            isHoennDex = FALSE;
         }
         else
         {
-            temp_dexCount = HOENN_DEX_COUNT;
-            temp_isHoennDex = TRUE;
+            dexCount = HOENN_DEX_COUNT;
+            isHoennDex = TRUE;
         }
         break;
     }
@@ -2567,14 +2564,14 @@ static void CreatePokedexList(u8 dexMode, u8 order)
     switch (order)
     {
     case ORDER_NUMERICAL:
-        if (temp_isHoennDex)
+        if (isHoennDex)
         {
-            for (i = 0; i < temp_dexCount; i++)
+            for (i = 0; i < dexCount; i++)
             {
-                temp_dexNum = HoennToNationalOrder(i + 1);
-                sPokedexView->pokedexList[i].dexNum = temp_dexNum;
-                sPokedexView->pokedexList[i].seen = GetSetPokedexFlag(temp_dexNum, FLAG_GET_SEEN);
-                sPokedexView->pokedexList[i].owned = GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT);
+                dexNum = HoennToNationalOrder(i + 1);
+                sPokedexView->pokedexList[i].dexNum = dexNum;
+                sPokedexView->pokedexList[i].seen = GetSetPokedexFlag(dexNum, FLAG_GET_SEEN);
+                sPokedexView->pokedexList[i].owned = GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT);
                 if (sPokedexView->pokedexList[i].seen)
                     sPokedexView->pokemonListCount = i + 1;
             }
@@ -2582,16 +2579,16 @@ static void CreatePokedexList(u8 dexMode, u8 order)
         else
         {
             s16 r5, r10;
-            for (i = 0, r5 = 0, r10 = 0; i < temp_dexCount; i++)
+            for (i = 0, r5 = 0, r10 = 0; i < dexCount; i++)
             {
-                temp_dexNum = i + 1;
-                if (GetSetPokedexFlag(temp_dexNum, FLAG_GET_SEEN))
+                dexNum = i + 1;
+                if (GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
                     r10 = 1;
                 if (r10)
                 {
-                    sPokedexView->pokedexList[r5].dexNum = temp_dexNum;
-                    sPokedexView->pokedexList[r5].seen = GetSetPokedexFlag(temp_dexNum, FLAG_GET_SEEN);
-                    sPokedexView->pokedexList[r5].owned = GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT);
+                    sPokedexView->pokedexList[r5].dexNum = dexNum;
+                    sPokedexView->pokedexList[r5].seen = GetSetPokedexFlag(dexNum, FLAG_GET_SEEN);
+                    sPokedexView->pokedexList[r5].owned = GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT);
                     if (sPokedexView->pokedexList[r5].seen)
                         sPokedexView->pokemonListCount = r5 + 1;
                     r5++;
@@ -2600,27 +2597,33 @@ static void CreatePokedexList(u8 dexMode, u8 order)
         }
         break;
     case ORDER_ALPHABETICAL:
-        for (i = 0; i < NUM_SPECIES - 1; i++)
+        for (i = 0; i < POKEDEX_ORDER_ARRAY_LENGTH - 1; i++)
         {
-            temp_dexNum = gPokedexOrder_Alphabetical[i];
+            dexNum = gPokedexOrder_Alphabetical[i];
 
-            if (NationalToHoennOrder(temp_dexNum) <= temp_dexCount && GetSetPokedexFlag(temp_dexNum, FLAG_GET_SEEN))
+            if (!IsSpeciesEnabled(NationalPokedexNumToSpecies(dexNum)))
+                continue;
+
+            if (dexNum <= NATIONAL_DEX_COUNT && (!isHoennDex || NationalToHoennOrder(dexNum) != 0) && GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
             {
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = temp_dexNum;
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = dexNum;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].seen = TRUE;
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT);
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT);
                 sPokedexView->pokemonListCount++;
             }
         }
         break;
     case ORDER_HEAVIEST:
-        for (i = NATIONAL_DEX_COUNT - 1; i >= 0; i--)
+        for (i = POKEDEX_ORDER_ARRAY_LENGTH - 1; i >= 0; i--)
         {
-            temp_dexNum = gPokedexOrder_Weight[i];
+            dexNum = gPokedexOrder_Weight[i];
 
-            if (NationalToHoennOrder(temp_dexNum) <= temp_dexCount && GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT))
+            if (!IsSpeciesEnabled(NationalPokedexNumToSpecies(dexNum)))
+                continue;
+
+            if (dexNum <= NATIONAL_DEX_COUNT && (!isHoennDex || NationalToHoennOrder(dexNum) != 0) && GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
             {
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = temp_dexNum;
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = dexNum;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].seen = TRUE;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = TRUE;
                 sPokedexView->pokemonListCount++;
@@ -2628,13 +2631,16 @@ static void CreatePokedexList(u8 dexMode, u8 order)
         }
         break;
     case ORDER_LIGHTEST:
-        for (i = 0; i < NATIONAL_DEX_COUNT; i++)
+        for (i = 0; i < POKEDEX_ORDER_ARRAY_LENGTH; i++)
         {
-            temp_dexNum = gPokedexOrder_Weight[i];
+            dexNum = gPokedexOrder_Weight[i];
 
-            if (NationalToHoennOrder(temp_dexNum) <= temp_dexCount && GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT))
+            if (!IsSpeciesEnabled(NationalPokedexNumToSpecies(dexNum)))
+                continue;
+
+            if (dexNum <= NATIONAL_DEX_COUNT && (!isHoennDex || NationalToHoennOrder(dexNum) != 0) && GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
             {
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = temp_dexNum;
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = dexNum;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].seen = TRUE;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = TRUE;
                 sPokedexView->pokemonListCount++;
@@ -2642,13 +2648,16 @@ static void CreatePokedexList(u8 dexMode, u8 order)
         }
         break;
     case ORDER_TALLEST:
-        for (i = NATIONAL_DEX_COUNT - 1; i >= 0; i--)
+        for (i = POKEDEX_ORDER_ARRAY_LENGTH - 1; i >= 0; i--)
         {
-            temp_dexNum = gPokedexOrder_Height[i];
+            dexNum = gPokedexOrder_Height[i];
 
-            if (NationalToHoennOrder(temp_dexNum) <= temp_dexCount && GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT))
+            if (!IsSpeciesEnabled(NationalPokedexNumToSpecies(dexNum)))
+                continue;
+
+            if (dexNum <= NATIONAL_DEX_COUNT && (!isHoennDex || NationalToHoennOrder(dexNum) != 0) && GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
             {
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = temp_dexNum;
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = dexNum;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].seen = TRUE;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = TRUE;
                 sPokedexView->pokemonListCount++;
@@ -2656,13 +2665,16 @@ static void CreatePokedexList(u8 dexMode, u8 order)
         }
         break;
     case ORDER_SMALLEST:
-        for (i = 0; i < NATIONAL_DEX_COUNT; i++)
+        for (i = 0; i < POKEDEX_ORDER_ARRAY_LENGTH; i++)
         {
-            temp_dexNum = gPokedexOrder_Height[i];
+            dexNum = gPokedexOrder_Height[i];
 
-            if (NationalToHoennOrder(temp_dexNum) <= temp_dexCount && GetSetPokedexFlag(temp_dexNum, FLAG_GET_CAUGHT))
+            if (!IsSpeciesEnabled(NationalPokedexNumToSpecies(dexNum)))
+                continue;
+            
+            if (dexNum <= NATIONAL_DEX_COUNT && (!isHoennDex || NationalToHoennOrder(dexNum) != 0) && GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
             {
-                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = temp_dexNum;
+                sPokedexView->pokedexList[sPokedexView->pokemonListCount].dexNum = dexNum;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].seen = TRUE;
                 sPokedexView->pokedexList[sPokedexView->pokemonListCount].owned = TRUE;
                 sPokedexView->pokemonListCount++;
